@@ -1298,6 +1298,10 @@
     color: var(--blue); font-size: .85rem; font-weight: 700;
   }
   .tier-card.unavailable { opacity: .4; cursor: not-allowed; }
+  .tier-card.reference-only {
+    border-color: #ffcaca;
+    background: linear-gradient(180deg, #ffffff 0%, #fff7f7 100%);
+  }
   .tier-label-row {
     display: flex;
     align-items: center;
@@ -1316,6 +1320,10 @@
     color: var(--green);
     background: var(--green-l);
     white-space: nowrap;
+  }
+  .tier-badge.danger {
+    color: #c62828;
+    background: #fff1f1;
   }
   .tier-express  .tier-label { color: var(--blue); }
   .tier-standard .tier-label { color: var(--indigo); }
@@ -1413,6 +1421,37 @@
     background: linear-gradient(180deg, #f7faff 0%, #eef3ff 100%);
     border: 1.5px solid #d1ddf8;
     color: #1f5fbf;
+  }
+  .notice-card.error {
+    background: linear-gradient(180deg, #fffafa 0%, #fff1f1 100%);
+    border: 1.5px solid #ffcaca;
+    color: #c62828;
+    box-shadow: 0 12px 22px rgba(198, 40, 40, .08);
+  }
+  .notice-card.error strong {
+    font-size: .9rem;
+  }
+  .notice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .notice-action-btn {
+    border: 1px solid rgba(198, 40, 40, .22);
+    background: #fff;
+    color: #c62828;
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: .72rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .notice-action-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(198, 40, 40, .38);
+    box-shadow: 0 8px 18px rgba(198, 40, 40, .08);
   }
 
   /* Input row with label and hint */
@@ -3387,6 +3426,11 @@
       border-color: rgba(238,107,110,.22);
       box-shadow: 0 16px 30px rgba(238,107,110,.08);
     }
+    .profit-hero.blocked {
+      border-color: rgba(198,40,40,.28);
+      background: linear-gradient(135deg, #fffafa 0%, #fff1f1 100%);
+      box-shadow: 0 16px 30px rgba(198,40,40,.10);
+    }
     .profit-hero.idle {
       border-color: rgba(91,124,250,.18);
     }
@@ -3442,6 +3486,11 @@
       background: rgba(110,120,144,.08);
       border-color: rgba(110,120,144,.12);
       color: #617089;
+    }
+    .hero-badge.danger {
+      background: #fff1f1;
+      border-color: #ffcaca;
+      color: #c62828;
     }
     .cockpit-kpis {
       display: grid;
@@ -4347,10 +4396,12 @@ async function copyResultSummary() {
 
   const pricing = computePricing(base, tierData.fee_rmb);
   const limit = getSizeLimit(result.group);
+  const shippingState = getShippingState(result);
   const sizeText = result.inputs?.length > 0 && result.inputs?.width > 0 && result.inputs?.height > 0
     ? `${result.sizeCheck?.sumEdges || 0}cm / ${result.sizeCheck?.maxEdge || 0}cm`
     : '未填写';
   const summary = [
+    `发货状态：${shippingState.blocked ? '无法发货（仅供参考）' : shippingState.pendingDims ? '待补尺寸判断' : '可发'}`,
     `货件组别：${groupChinese(result.group)}`,
     `真实售价：¥${base.realRMB.toFixed(2)}`,
     `推荐上架价：¥${pricing.price.toFixed(2)}`,
@@ -4376,11 +4427,20 @@ function chooseBestTier() {
     return;
   }
   selectTier(bestTier, _lastFreightResult[bestTier].fee_rmb);
-  showToast(`已切换到${tierName(bestTier)}`);
+  showToast(`${getShippingState(_lastFreightResult).blocked ? '当前禁发，仅参考：' : '已切换到'}${tierName(bestTier)}`);
 }
 
 function getFreightActionHint(base, options = {}) {
-  const { needExtraSmallDims, needGeneralDimsTip, selectedTierData } = options;
+  const { needExtraSmallDims, needGeneralDimsTip, selectedTierData, result } = options;
+  const shippingState = getShippingState(result);
+
+  if (shippingState.blocked) {
+    return {
+      cls: 'error',
+      title: '无法发货，但可以继续看参考定价',
+      text: `原因：${shippingState.reasons.join('；') || '尺寸或密度不符合中通发货规则'}。页面会继续计算运费、利润和推荐售价，方便你判断是否要改尺寸、改包装或换渠道。`,
+    };
+  }
 
   if (needExtraSmallDims) {
     return {
@@ -4466,6 +4526,64 @@ function getSizeLimit(group) {
   return { sum: limits[0], max: limits[1] };
 }
 
+function getShippingState(result) {
+  if (!result) {
+    return { blocked: false, pendingDims: false, reasons: [], label: '待判断' };
+  }
+
+  const hasDims = result.inputs?.length > 0 && result.inputs?.width > 0 && result.inputs?.height > 0;
+  const reasons = Array.isArray(result.shippingWarnings) ? result.shippingWarnings.filter(Boolean) : [];
+  const blocked = !!result.shipmentBlocked || reasons.length > 0;
+  const pendingDims = !blocked && (result.shippingStatus === 'pending_dims' || (result.group === 'Extra Small' && !hasDims));
+  const label = blocked ? '无法发货' : pendingDims ? '待补尺寸' : result.group ? '可发校验通过' : '待判断';
+
+  return { blocked, pendingDims, reasons, label };
+}
+
+function getShippingNoticeHtml(result) {
+  const state = getShippingState(result);
+  if (!state.blocked) return '';
+
+  const reasonHtml = state.reasons.length
+    ? state.reasons.map(reason => `<div>• ${reason}</div>`).join('')
+    : '<div>• 当前尺寸或密度不符合中通发货规则</div>';
+
+  return `
+    <div class="notice-card error">
+      <strong>当前无法发货，但已继续为你计算参考售价、运费和利润。</strong>
+      <div style="margin-top:6px">${reasonHtml}</div>
+      <div style="margin-top:6px;color:#8b2d2d">请优先调整包装尺寸/重量或更换渠道；下方利润只用于改价参考，不代表可以实际发货。</div>
+      <div class="notice-actions">
+        <button class="notice-action-btn" type="button" onclick="scrollToShippingInputs()">回到尺寸输入</button>
+        <button class="notice-action-btn" type="button" onclick="copyShippingWarning()">复制禁发提醒</button>
+      </div>
+    </div>`;
+}
+
+function scrollToShippingInputs() {
+  scrollToInputSection('product');
+  showToast('已定位到产品重量与尺寸');
+}
+
+async function copyShippingWarning() {
+  const state = getShippingState(_lastFreightResult);
+  const base = getPricingBase();
+  const text = [
+    '发货状态：当前无法发货',
+    `商品组别：${_lastFreightResult?.group ? groupChinese(_lastFreightResult.group) : '待判断'}`,
+    `参考售价：¥${(base.recommendPrice || 0).toFixed(2)}`,
+    `原因：${state.reasons.join('；') || '尺寸或密度不符合中通发货规则'}`,
+    '说明：页面已继续计算运费和利润，但结果仅供改价参考，不代表可以实际发货。'
+  ].join('\n');
+
+  try {
+    await copyText(text);
+    showToast('禁发提醒已复制');
+  } catch (error) {
+    showToast('复制失败，请手动选择');
+  }
+}
+
 function predictGroup(base, weight_kg) {
   if (!(base?.realRMB > 0 && base?.rate > 0 && weight_kg > 0)) return null;
   return carrier_zto.classify(weight_kg, base.realRMB * base.rate);
@@ -4496,13 +4614,13 @@ function updateDimensionRequirement(base, weight_kg, length, width, height) {
 
   if (group === 'Extra Small' && !hasDims) {
     alert.className = 'dimension-alert show warn';
-    alert.innerHTML = '<strong>当前属于超级轻小件，必须填写三边尺寸</strong>中通需要先计算密度，才能判断这票货能不能发。';
+    alert.innerHTML = '<strong>当前属于超级轻小件，必须填写三边尺寸</strong>系统会先继续给参考定价；补齐长宽高后，再最终判断是否可以发货。';
     return;
   }
 
   if (group === 'Extra Small' && hasDims) {
     alert.className = 'dimension-alert show ok';
-    alert.innerHTML = '<strong>已填写三边尺寸</strong>系统会按中通密度规则继续判断是否可发。';
+    alert.innerHTML = '<strong>已填写三边尺寸</strong>系统会继续测算利润，并按中通密度规则同步提示是否可以发货。';
     return;
   }
 
@@ -4566,9 +4684,10 @@ function syncDashboardExtensions(base, result, tier) {
   const fmtSignedMoney = value => Number.isFinite(value) ? `¥${value.toFixed(2)}` : '—';
   const fmtPercent = value => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
   const missingText = (base?.requiredState?.missingList || []).filter(item => item !== '产品实重').join('、');
+  const shippingState = getShippingState(result);
   const tierData = tier && result?.[tier] && !result[tier].unavailable ? result[tier] : null;
-  const groupText = result?.groupError ? '不可寄送' : (result?.group ? groupChinese(result.group) : (base?.realRMB > 0 ? '待判断' : '待填写'));
-  const routeText = tierData ? tierName(tier) : (result?.groupError ? '不可选' : '待选择');
+  const groupText = result?.groupError ? '不可寄送' : (result?.group ? `${groupChinese(result.group)}${shippingState.blocked ? ' · 禁发' : ''}` : (base?.realRMB > 0 ? '待判断' : '待填写'));
+  const routeText = tierData ? `${tierName(tier)}${shippingState.blocked ? '（参考）' : ''}` : (result?.groupError ? '不可选' : '待选择');
   let pricing = null;
 
   rateCard.classList.remove('good', 'warn', 'bad');
@@ -4576,7 +4695,10 @@ function syncDashboardExtensions(base, result, tier) {
   if (tierData && base?.requiredState?.pricingReady) {
     pricing = computePricing(base, tierData.fee_rmb);
     rateEl.textContent = fmtPercent(pricing.profitRate);
-    if (base.requiredState?.commissionLow) {
+    if (shippingState.blocked) {
+      rateMetaEl.textContent = `禁发参考 · ${tierName(tier)} · 净利润 ${fmtSignedMoney(pricing.profit)}`;
+      rateCard.classList.add('bad');
+    } else if (base.requiredState?.commissionLow) {
       rateMetaEl.textContent = '佣金率低于 10%，请先复核';
       rateCard.classList.add('warn');
     } else {
@@ -4716,18 +4838,24 @@ function syncDashboardExtensions(base, result, tier) {
       : '补尺寸后更准确';
   const realMeta = _manualRealPrice ? '当前为手动真实售价' : (base?.realRMB > 0 ? '按黑标 / 绿标自动推算' : '先填写黑标和绿标');
   const recommendMeta = _manualRecommendPrice ? '当前为手动上架价' : (base?.recommendPrice > 0 ? '默认按真实售价 × 0.95' : '真实售价生成后联动');
-  const heroClass = pricing ? (pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad') : 'idle';
-  const heroSub = pricing
+  const heroClass = shippingState.blocked ? 'blocked' : (pricing ? (pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad') : 'idle');
+  const heroSub = shippingState.blocked
+    ? `${routeText} · 当前无法发货，仅保留参考运费与利润`
+    : pricing
     ? (base.requiredState?.commissionLow
         ? '佣金率低于 10%，请先复核，否则利润会被高估。'
         : `${routeText} · 运费 ${freightText} · 总成本 ${fmtMoney(pricing.totalCost)}`)
     : (!base?.requiredState?.pricingReady
         ? `先补 ${missingText || '采购成本和佣金率'}`
         : (result?.group ? '选择一个运费方案后，这里会直接给出利润结论' : '补重量和三边尺寸后，这里会直接给出利润结论'));
-  const decisionText = pricing
+  const decisionText = shippingState.blocked
+    ? '当前尺寸或密度已经超出发货规则。系统继续保留参考利润，方便你决定是否改包装、改重量或换渠道。'
+    : pricing
     ? (pricing.profit >= 0 ? '当前方案有利润，现在可以直接比较不同渠道差异。' : '当前方案亏损，建议优先切换渠道或重新调整售价。')
     : '先补完左侧必填项，右侧会直接告诉你赚多少、利润率多少。';
-  const sizeText = result?.group === 'Extra Small'
+  const sizeText = shippingState.blocked
+    ? `禁发原因：${shippingState.reasons.join('；') || '尺寸或密度超限'}`
+    : result?.group === 'Extra Small'
     ? '超级轻小件一定要填三边尺寸，中通需要先判断密度是否可发。'
     : (result?.group
         ? '其他渠道也建议填写三边尺寸，不填时利润只按实重预估，计抛可能导致偏差。'
@@ -4744,6 +4872,7 @@ function syncDashboardExtensions(base, result, tier) {
       <div class="profit-hero-badges">
         <span class="hero-badge">${groupText}</span>
         <span class="hero-badge soft">${routeText}</span>
+        ${shippingState.blocked ? '<span class="hero-badge danger">无法发货 · 仅参考</span>' : ''}
         <span class="hero-badge soft">贴单/增值服务 ${fmtMoney(base?.label_fee || 0)}</span>
       </div>
     </div>
@@ -4790,9 +4919,10 @@ function syncDashboardExtensions(base, result, tier) {
   const fmtSignedMoney = value => Number.isFinite(value) ? `¥${value.toFixed(2)}` : '—';
   const fmtPercent = value => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
   const missingText = (base?.requiredState?.missingList || []).filter(item => item !== '产品实重').join('、');
+  const shippingState = getShippingState(result);
   const tierData = tier && result?.[tier] && !result[tier].unavailable ? result[tier] : null;
-  const groupText = result?.groupError ? '不可寄送' : (result?.group ? groupChinese(result.group) : (base?.realRMB > 0 ? '待判断' : '待填写'));
-  const routeText = tierData ? tierName(tier) : (result?.groupError ? '不可选' : '待选择');
+  const groupText = result?.groupError ? '不可寄送' : (result?.group ? `${groupChinese(result.group)}${shippingState.blocked ? ' · 禁发' : ''}` : (base?.realRMB > 0 ? '待判断' : '待填写'));
+  const routeText = tierData ? `${tierName(tier)}${shippingState.blocked ? '（参考）' : ''}` : (result?.groupError ? '不可选' : '待选择');
   let pricing = null;
 
   rateCard.classList.remove('good', 'warn', 'bad');
@@ -4800,7 +4930,10 @@ function syncDashboardExtensions(base, result, tier) {
   if (tierData && base?.requiredState?.pricingReady) {
     pricing = computePricing(base, tierData.fee_rmb);
     rateEl.textContent = fmtPercent(pricing.profitRate);
-    if (base.requiredState?.commissionLow) {
+    if (shippingState.blocked) {
+      rateMetaEl.textContent = `禁发参考 · ${tierName(tier)} · 净利润 ${fmtSignedMoney(pricing.profit)}`;
+      rateCard.classList.add('bad');
+    } else if (base.requiredState?.commissionLow) {
       rateMetaEl.textContent = '佣金率低于 10%，请先复核';
       rateCard.classList.add('warn');
     } else {
@@ -4838,18 +4971,24 @@ function syncDashboardExtensions(base, result, tier) {
       : '补尺寸后更准确';
   const realMeta = _manualRealPrice ? '当前为手动真实售价' : (base?.realRMB > 0 ? '按黑标 / 绿标自动推算' : '先填写黑标和绿标');
   const recommendMeta = _manualRecommendPrice ? '当前为手动上架价' : (base?.recommendPrice > 0 ? '默认按真实售价 × 0.95' : '真实售价生成后联动');
-  const heroClass = pricing ? (pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad') : 'idle';
-  const heroSub = pricing
+  const heroClass = shippingState.blocked ? 'blocked' : (pricing ? (pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad') : 'idle');
+  const heroSub = shippingState.blocked
+    ? `${routeText} · 当前无法发货，仅保留参考运费与利润`
+    : pricing
     ? (base.requiredState?.commissionLow
         ? '佣金率低于 10%，请先复核，否则利润会被高估。'
         : `${routeText} · 运费 ${freightText} · 总成本 ${fmtMoney(pricing.totalCost)}`)
     : (!base?.requiredState?.pricingReady
         ? `先补 ${missingText || '采购成本和佣金率'}`
         : (result?.group ? '选择一个运费方案后，这里会直接给出利润结论' : '补重量和三边尺寸后，这里会直接给出利润结论'));
-  const decisionText = pricing
+  const decisionText = shippingState.blocked
+    ? '当前尺寸或密度已经超出发货规则。系统继续保留参考利润，方便你决定是否改包装、改重量或换渠道。'
+    : pricing
     ? (pricing.profit >= 0 ? '当前方案有利润，现在可以直接比较不同渠道差异。' : '当前方案亏损，建议优先切换渠道或重新调整售价。')
     : '先补完左侧必填项，右侧会直接告诉你赚多少、利润率多少。';
-  const sizeText = result?.group === 'Extra Small'
+  const sizeText = shippingState.blocked
+    ? `禁发原因：${shippingState.reasons.join('；') || '尺寸或密度超限'}`
+    : result?.group === 'Extra Small'
     ? '超级轻小件一定要填三边尺寸，中通需要先判断密度是否可发。'
     : (result?.group
         ? '其他渠道也建议填写三边尺寸，不填时利润只按实重预估，计抛可能导致偏差。'
@@ -4866,6 +5005,7 @@ function syncDashboardExtensions(base, result, tier) {
       <div class="profit-hero-badges">
         <span class="hero-badge">${groupText}</span>
         <span class="hero-badge soft">${routeText}</span>
+        ${shippingState.blocked ? '<span class="hero-badge danger">无法发货 · 仅参考</span>' : ''}
         <span class="hero-badge soft">贴单/增值服务 ${fmtMoney(base?.label_fee || 0)}</span>
       </div>
     </div>
@@ -4908,6 +5048,7 @@ function renderDashboard(base, result, tier) {
   const profitEl = document.getElementById('dashProfit');
   const profitMetaEl = document.getElementById('dashProfitMeta');
   if (!realEl || !recommendEl || !groupEl || !tierEl || !profitCard || !profitEl || !profitMetaEl) return;
+  const shippingState = getShippingState(result);
 
   const fmt = value => value > 0 ? `¥${value.toFixed(2)}` : '—';
   realEl.textContent = fmt(base.realRMB || 0);
@@ -4917,9 +5058,9 @@ function renderDashboard(base, result, tier) {
     groupEl.textContent = '不可寄送';
     tierEl.textContent = result.groupError;
   } else if (result?.group) {
-    groupEl.textContent = groupChinese(result.group);
+    groupEl.textContent = `${groupChinese(result.group)}${shippingState.blocked ? ' · 禁发' : ''}`;
     const requireDims = result.group === 'Extra Small' && !(result.inputs?.length > 0 && result.inputs?.width > 0 && result.inputs?.height > 0);
-    tierEl.textContent = requireDims ? '请先填写三边尺寸计算密度' : (tier ? `当前方案：${tierName(tier)}` : '请选择运费方案');
+    tierEl.textContent = requireDims ? '请先填写三边尺寸计算密度' : (tier ? `当前方案：${tierName(tier)}${shippingState.blocked ? '（参考）' : ''}` : '请选择运费方案');
   } else {
     groupEl.textContent = base.realRMB > 0 ? '待判断' : '待填写';
     tierEl.textContent = base.realRMB > 0 ? '继续填写重量与尺寸' : '等待价格信息';
@@ -4937,6 +5078,11 @@ function renderDashboard(base, result, tier) {
     }
     const pricing = computePricing(base, tierData.fee_rmb);
     profitEl.textContent = `¥${pricing.profit.toFixed(2)}`;
+    if (shippingState.blocked) {
+      profitMetaEl.textContent = `${tierName(tier)} · 当前无法发货，仅供参考`;
+      profitCard.classList.add('bad');
+      return;
+    }
     if (base.requiredState?.commissionLow) {
       profitMetaEl.textContent = `${tierName(tier)} · 佣金率低于 10%，请先复核`;
       profitCard.classList.add('warn');
@@ -5001,6 +5147,9 @@ function selectTier(tier, fee) {
   syncDashboardExtensions(base, _lastFreightResult, tier);
   renderResult(_lastFreightResult, base);
   renderPricing(base, tier);
+  if (getShippingState(_lastFreightResult).blocked) {
+    showToast(`已切到${tierName(tier)}，当前为禁发参考价`);
+  }
 }
 
 function renderFreightPrompt(message) {
@@ -5035,17 +5184,19 @@ function renderResult(r, base) {
   const selectedTierData = selectedTierKey && r[selectedTierKey] && !r[selectedTierKey].unavailable
     ? r[selectedTierKey]
     : null;
+  const shippingState = getShippingState(r);
+  const shippingNoticeHtml = getShippingNoticeHtml(r);
 
   const limit = getSizeLimit(r.group);
-  const sizeChipState = r.sizeCheck ? (r.sizeCheck.result === '限定区间内' ? 'ok' : 'error') : (needGeneralDimsTip ? 'warn' : 'info');
+  const sizeChipState = r.sizeCheck ? (r.sizeCheck.pass ? 'ok' : 'error') : (needGeneralDimsTip ? 'warn' : 'info');
   const sizeChipValue = r.sizeCheck
     ? `实际 ${r.sizeCheck.sumEdges}/${r.sizeCheck.maxEdge}cm${limit ? ` · 限制 ≤${limit.sum}/≤${limit.max}cm` : ''}`
     : (limit ? `建议补三边 · 限制 ≤${limit.sum}/≤${limit.max}cm` : '未提供尺寸');
-  const actionHint = getFreightActionHint(base, { needExtraSmallDims, needGeneralDimsTip, selectedTierData });
+  const actionHint = getFreightActionHint(base, { needExtraSmallDims, needGeneralDimsTip, selectedTierData, result: r });
 
   let detailRows = '';
   if (r.sizeCheck) {
-    detailRows += `<div class="status-row"><div class="status-dot ${r.sizeCheck.result === '限定区间内' ? 'dot-ok' : 'dot-err'}"></div>
+    detailRows += `<div class="status-row"><div class="status-dot ${r.sizeCheck.pass ? 'dot-ok' : 'dot-err'}"></div>
       <span class="status-label">尺寸校验</span><span class="status-value">${r.sizeCheck.result}</span>
       <span class="size-limit-chip">实际 ${r.sizeCheck.sumEdges} / ${r.sizeCheck.maxEdge}cm${limit ? ` · 限制 ≤${limit.sum} / ≤${limit.max}cm` : ''}</span></div>`;
   } else {
@@ -5064,7 +5215,7 @@ function renderResult(r, base) {
       <span class="status-label">计抛</span><span class="status-value">${r.isVolumetric ? '是（按体积重计费）' : '否（按实重计费）'}</span></div>`;
   }
 
-  let html = `${needExtraSmallDims ? '<div class="notice-card warn"><strong>当前属于超级轻小件：</strong>请先填写长、宽、高。中通需要先计算密度，才能判断这票货是否可以发货。</div>' : ''}${needGeneralDimsTip ? '<div class="notice-card info"><strong>建议填写三边尺寸：</strong>不填时利润只按实重预估；计抛 = 长×宽×高 ÷ 12000，结果可能偏差。</div>' : ''}
+  let html = `${shippingNoticeHtml}${needExtraSmallDims ? '<div class="notice-card warn"><strong>当前属于超级轻小件：</strong>请先填写长、宽、高。中通需要先计算密度，才能判断这票货是否可以发货。</div>' : ''}${needGeneralDimsTip ? '<div class="notice-card info"><strong>建议填写三边尺寸：</strong>不填时利润只按实重预估；计抛 = 长×宽×高 ÷ 12000，结果可能偏差。</div>' : ''}
     <div class="result-hero">
       <div>
         <div class="result-hero-title">货件判断结果</div>
@@ -5083,6 +5234,10 @@ function renderResult(r, base) {
     </div>
     ${actionHint ? `<div class="action-hint-card ${actionHint.cls}"><div class="title">${actionHint.title}</div><div class="text">${actionHint.text}</div></div>` : ''}
     <div class="result-chip-grid">
+      <div class="result-chip ${shippingState.blocked ? 'error' : shippingState.pendingDims ? 'warn' : 'ok'}">
+        <span class="result-chip-dot"></span>
+        <div><span class="result-chip-label">发货状态</span><span class="result-chip-value">${shippingState.label}${shippingState.blocked ? ' · 价格仅供参考' : ''}</span></div>
+      </div>
       <div class="result-chip ${sizeChipState}">
         <span class="result-chip-dot"></span>
         <div><span class="result-chip-label">尺寸校验</span><span class="result-chip-value">${sizeChipValue}</span></div>
@@ -5113,9 +5268,9 @@ function renderResult(r, base) {
     if (!d) continue;
     const isSel = _selectedTier?.tier === t.key;
     const isBest = t.key === bestTier && !d.unavailable;
-    html += `<div class="tier-card ${t.cls}${d.unavailable?' unavailable':''}${isSel?' selected':''}${isBest?' recommended':''}"
+    html += `<div class="tier-card ${t.cls}${d.unavailable?' unavailable':''}${shippingState.blocked && !d.unavailable?' reference-only':''}${isSel?' selected':''}${isBest?' recommended':''}"
       onclick="${d.unavailable?'':` selectTier('${t.key}', ${d.fee_rmb})`}">
-      <div class="tier-label-row"><div class="tier-label">${t.label}</div>${isBest?'<span class="tier-badge">利润最高</span>':''}</div>
+      <div class="tier-label-row"><div class="tier-label">${t.label}</div>${shippingState.blocked && !d.unavailable ? '<span class="tier-badge danger">禁发参考</span>' : (isBest?'<span class="tier-badge">利润最高</span>':'')}</div>
       <div style="font-size:.68rem;color:var(--gray4);margin-bottom:4px">${t.sub}</div>`;
     if (d.unavailable) {
       html += `<div style="font-size:.8rem;color:var(--gray4)">暂未上线</div>`;
@@ -5123,6 +5278,7 @@ function renderResult(r, base) {
       const tierPricing = computePricing(base, d.fee_rmb);
       html += `<div class="tier-fee"><span class="currency">¥</span>${d.fee_rmb.toFixed(2)}</div>
         <div class="tier-sub">计费重 ${d.billingWeight_g} 克</div>
+        ${shippingState.blocked ? '<div class="tier-sub" style="color:#c62828;font-weight:800">当前不可发货，仅供改价参考</div>' : ''}
         <div class="tier-sub">${base.requiredState?.pricingReady ? `利润率 ${tierPricing.totalCost > 0 ? tierPricing.profitRate.toFixed(1) + '%' : '待填成本'}` : '利润率：请先补全采购成本和佣金率'}</div>`;
       if (bigRateMap?.[t.key]) {
         html += `<div class="tier-rate">大件密度价：<strong>${bigRateMap[t.key]}</strong></div>`;
@@ -5424,7 +5580,7 @@ function updateDensityPreview(base, weight_kg, length, width, height) {
     densityOutput.value = '';
     const group = predictGroup(base, weight_kg);
     if (group === 'Extra Small' && !(length > 0 && width > 0 && height > 0)) {
-      densityHint.textContent = '当前属于超级轻小件，必须填写三边尺寸后才能计算密度，并判断中通是否可发';
+      densityHint.textContent = '当前属于超级轻小件，必须填写三边尺寸后才能计算密度；页面会先继续给参考定价，再提示是否可发';
       densityHint.style.color = 'var(--red)';
       return;
     }
@@ -5448,7 +5604,7 @@ function updateDensityPreview(base, weight_kg, length, width, height) {
       densityHint.textContent = '当前属于超级轻小件，密度大于 55，可发';
       densityHint.style.color = 'var(--green)';
     } else {
-      densityHint.textContent = '当前属于超级轻小件，密度不高于 55，不可发';
+      densityHint.textContent = '当前属于超级轻小件，密度不高于 55，无法发货；系统已继续保留参考定价';
       densityHint.style.color = 'var(--red)';
     }
     return;
@@ -5515,12 +5671,14 @@ function renderPricing(base, tier) {
   }
 
   const pricing = computePricing(base, tierData.fee_rmb);
+  const shippingState = getShippingState(_lastFreightResult);
 
   const fmtR = v => '¥' + v.toFixed(2);
   const rateClass = pricing.profitRate >= 20 ? 'highlight' : pricing.profitRate >= 0 ? 'warn' : 'err';
   const profitClass = pricing.profit >= 0 ? 'pos' : 'neg';
 
   let html = `
+    ${shippingState.blocked ? `<div class="required-inline-note error" style="margin-bottom:12px">当前尺寸/密度不符合中通发货规则，以下利润仍会继续计算，但只能作为改价参考，不能按此直接发货。</div>` : ''}
     ${base.requiredState?.commissionLow ? '<div class="required-inline-note error" style="margin-bottom:12px">当前佣金率低于 10%，请先复核，否则下面的利润结果会被高估。</div>' : ''}
     <div class="pricing-toolbar">
       <div class="pricing-toolbar-note">先看利润率、净利润和上架价；明细与风险分析可以按需展开。</div>
