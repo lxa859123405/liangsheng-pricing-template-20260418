@@ -172,6 +172,9 @@
   .dashboard-card.good .value { color: var(--green); }
   .dashboard-card.warn .value { color: var(--orange); }
   .dashboard-card.bad .value { color: var(--red); }
+  @media (max-width: 1180px) {
+    .dashboard-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
   @media (max-width: 860px) {
     .dashboard-strip { grid-template-columns: 1fr 1fr; }
   }
@@ -351,6 +354,15 @@
   .form-control[readonly] {
     background: #f2f4f8;
     color: #6f7a8d;
+  }
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
   .weight-row { display: flex; gap: 10px; align-items: stretch; }
@@ -907,12 +919,73 @@
   #tab-pricing .card-body {
     background: linear-gradient(180deg, #fcfdff 0%, #f9fbff 100%);
   }
+  .live-cockpit .card-body {
+    background: linear-gradient(180deg, #fcfdff 0%, #f9fbff 100%);
+  }
   .result-panel { min-width: 0; }
   .result-empty {
     height: 100%; min-height: 180px; display: flex; flex-direction: column;
     align-items: center; justify-content: center; color: var(--gray4); gap: 8px;
   }
   .result-empty p { font-size: .85rem; }
+  .cockpit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .cockpit-item {
+    padding: 11px 12px;
+    border-radius: 14px;
+    border: 1px solid #e7edf8;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.78);
+    min-width: 0;
+  }
+  .cockpit-item.highlight {
+    border-color: rgba(91,124,250,.22);
+    background: linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(243,247,255,.98) 100%);
+  }
+  .cockpit-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--gray3);
+    text-transform: uppercase;
+  }
+  .cockpit-value {
+    font-size: 1.12rem;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: var(--gray2);
+  }
+  .cockpit-value.pos { color: var(--green); }
+  .cockpit-value.neg { color: var(--red); }
+  .cockpit-value.warn { color: var(--orange); }
+  .cockpit-value.info { color: var(--blue); }
+  .cockpit-meta {
+    margin-top: 4px;
+    font-size: .72rem;
+    line-height: 1.32;
+    color: var(--gray3);
+  }
+  .cockpit-note {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #e8edf6;
+    background: rgba(247,249,255,.96);
+    display: grid;
+    gap: 4px;
+    font-size: .74rem;
+    color: var(--gray3);
+    line-height: 1.38;
+  }
+  .cockpit-note strong {
+    color: var(--gray2);
+    font-size: .78rem;
+  }
   .dim-caption {
     font-size: .8rem;
     color: #8a94a6;
@@ -1767,6 +1840,11 @@
     margin-top: 4px;
     cursor: help;
   }
+  .compact-panel .vas-section {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
   @media (max-width: 760px) {
     .vas-summary,
     .vas-group { grid-template-columns: 1fr; }
@@ -2497,6 +2575,999 @@
       gap: 8px;
     }
   }
+  @media (min-width: 1180px) {
+    :root {
+      --page-width: 1288px;
+    }
+    body {
+      padding: 12px 16px 28px;
+    }
+    .page-title {
+      margin-bottom: 6px;
+    }
+    .page-title h1 {
+      font-size: 1.7rem;
+      line-height: 1.08;
+    }
+    .page-title p,
+    .page-badge,
+    .section-strip {
+      display: none;
+    }
+    .dashboard-strip {
+      max-width: var(--page-width);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .dashboard-card {
+      padding: 10px 12px;
+      border-radius: 14px;
+      min-height: 0;
+    }
+    .dashboard-card .label {
+      margin-bottom: 3px;
+      font-size: .64rem;
+    }
+    .dashboard-card .value {
+      font-size: 1rem;
+    }
+    .dashboard-card .meta {
+      margin-top: 3px;
+      font-size: .65rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.42fr) minmax(340px, .82fr);
+      gap: 14px;
+      align-items: start;
+      max-width: var(--page-width);
+    }
+    .compact-panel {
+      width: 100%;
+      margin-bottom: 0;
+    }
+    .compact-panel .card-header {
+      padding: 10px 14px 9px;
+      font-size: .8rem;
+    }
+    .compact-panel .card-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 1.04fr) minmax(0, .94fr);
+      gap: 10px;
+      padding: 10px 12px 12px;
+      align-items: start;
+    }
+    .input-overview,
+    .step-nav,
+    .overview-statuses,
+    .btn-calc,
+    .compact-panel .card-body > div[style*='text-align:center'] {
+      display: none;
+    }
+    #input-section-pricing,
+    #input-section-product,
+    #input-section-cost {
+      margin-bottom: 0;
+      min-height: 100%;
+      padding: 9px 10px 10px;
+      border-radius: 14px;
+    }
+    #input-section-pricing { grid-column: 1; }
+    #input-section-product { grid-column: 2; }
+    #input-section-cost { grid-column: 3; }
+    .section-head {
+      margin-bottom: 6px;
+    }
+    .section-title,
+    .compact-panel .section-title {
+      font-size: .7rem;
+    }
+    .section-state,
+    .compact-panel .section-state {
+      padding: 4px 7px;
+      font-size: .63rem;
+    }
+    .compact-panel .form-label {
+      margin-bottom: 4px;
+      font-size: .74rem;
+      line-height: 1.18;
+    }
+    .field-head {
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .field-tools {
+      gap: 5px;
+    }
+    .field-link {
+      font-size: .64rem;
+    }
+    .field-badge {
+      padding: 2px 6px;
+      font-size: .6rem;
+    }
+    .field-card {
+      padding: 8px;
+      border-radius: 11px;
+    }
+    .compact-panel .form-control,
+    .compact-panel .carrier-select {
+      min-height: 38px;
+      padding: 7px 9px;
+      border-radius: 10px;
+      font-size: .84rem;
+    }
+    .compact-panel .form-control::placeholder {
+      font-size: .78rem;
+    }
+    .compact-grid-2,
+    .cost-grid,
+    .derived-price-stack,
+    .product-stack {
+      gap: 7px;
+    }
+    #input-section-pricing {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+    #input-section-pricing .section-head,
+    #input-section-pricing > .form-group,
+    #input-section-pricing .compact-grid-2,
+    #input-section-pricing .derived-price-stack {
+      grid-column: 1 / -1;
+    }
+    #input-section-pricing .compact-grid-2,
+    #input-section-pricing .derived-price-stack {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+    #input-section-product {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+    #input-section-product .section-head,
+    #input-section-product > .form-label,
+    #input-section-product .dims-row,
+    #dimensionAlert,
+    #input-section-product > .compact-note {
+      grid-column: 1 / -1;
+    }
+    #input-section-product .product-stack {
+      display: contents;
+    }
+    .weight-row {
+      gap: 6px;
+    }
+    .unit-toggle {
+      min-height: 38px;
+      border-radius: 10px;
+      padding: 2px;
+    }
+    .unit-btn {
+      min-width: 40px;
+      padding: 0 8px;
+      font-size: .72rem;
+      border-radius: 8px;
+    }
+    .dim-caption {
+      display: none;
+    }
+    .dims-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 6px;
+      align-items: center;
+    }
+    .dims-sep {
+      margin-top: 0;
+      font-size: .9rem;
+    }
+    .dimension-alert,
+    .compact-note,
+    #commissionHint,
+    .required-inline-note {
+      font-size: .63rem;
+      line-height: 1.32;
+    }
+    .dimension-alert,
+    .required-inline-note {
+      margin-top: 0;
+      padding: 7px 8px;
+      border-radius: 10px;
+    }
+    .compact-note,
+    #commissionHint {
+      margin-top: 3px;
+    }
+    #densityHint {
+      min-height: 2.4em;
+    }
+    #input-section-cost {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 7px;
+    }
+    #input-section-cost .section-head,
+    #input-section-cost .cost-grid,
+    #commissionHint,
+    #requiredFieldsHint {
+      grid-column: 1 / -1;
+    }
+    #input-section-cost .cost-grid {
+      grid-template-columns: 1fr;
+      gap: 7px;
+    }
+    #input-section-cost .cost-grid .span-2 {
+      grid-column: auto;
+    }
+    #input-section-cost .field-head {
+      align-items: center;
+    }
+    .field-jump-btn {
+      padding: 3px 7px;
+      font-size: .6rem;
+    }
+    .quick-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 8px;
+      margin-top: 0;
+    }
+    .ghost-btn {
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: .74rem;
+    }
+    .results-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+      position: sticky;
+      top: 10px;
+      max-height: calc(100vh - 22px);
+      overflow: auto;
+      padding-right: 2px;
+    }
+    .results-stack::-webkit-scrollbar {
+      width: 8px;
+    }
+    .results-stack::-webkit-scrollbar-thumb {
+      background: rgba(158, 167, 186, .45);
+      border-radius: 999px;
+    }
+    #liveCockpitCard {
+      order: 0;
+    }
+    #tab-pricing {
+      order: 1;
+    }
+    #resultPanel {
+      order: 2;
+    }
+    .guide-fold {
+      order: 3;
+    }
+    .results-stack .card-header {
+      padding: 11px 14px 9px;
+      font-size: .8rem;
+    }
+    .live-cockpit .card-header {
+      background: linear-gradient(90deg, rgba(91,124,250,.08) 0%, rgba(110,99,246,.06) 100%);
+      border-bottom-color: #e2e9fb;
+    }
+    .live-cockpit .card-body,
+    .result-panel .card-body,
+    #tab-pricing .card-body {
+      padding: 12px 13px;
+    }
+    .cockpit-grid {
+      gap: 8px;
+    }
+    .cockpit-item {
+      padding: 10px 11px;
+      border-radius: 13px;
+    }
+    .cockpit-value {
+      font-size: 1.04rem;
+    }
+    .cockpit-meta {
+      font-size: .69rem;
+    }
+    .cockpit-note {
+      margin-top: 8px;
+      padding: 9px 10px;
+      gap: 3px;
+      font-size: .7rem;
+    }
+    #dashProfitRateCard {
+      background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
+    }
+    #dashProfitRateCard::before {
+      background: linear-gradient(90deg, rgba(46,161,114,.95), rgba(91,124,250,.3));
+    }
+  }
+
+  @media (min-width: 1180px) and (max-height: 820px) {
+    body {
+      padding-top: 10px;
+    }
+    .page-title {
+      margin-bottom: 4px;
+    }
+    .page-title h1 {
+      font-size: 1.54rem;
+    }
+    .dashboard-strip {
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .dashboard-card {
+      padding: 8px 10px;
+    }
+    .dashboard-card .label {
+      font-size: .61rem;
+    }
+    .dashboard-card .value {
+      font-size: .92rem;
+    }
+    .dashboard-card .meta {
+      font-size: .61rem;
+    }
+    .compact-panel .card-body {
+      gap: 8px;
+      padding: 9px 10px 10px;
+    }
+    #input-section-pricing,
+    #input-section-product,
+    #input-section-cost {
+      padding: 8px 9px 9px;
+    }
+    .field-card {
+      padding: 7px;
+    }
+    .compact-panel .form-control,
+    .compact-panel .carrier-select {
+      min-height: 36px;
+      padding: 6px 8px;
+    }
+    .compact-note,
+    #commissionHint,
+    .required-inline-note,
+    .dimension-alert {
+      font-size: .6rem;
+    }
+    .results-stack {
+      gap: 8px;
+      max-height: calc(100vh - 16px);
+    }
+    .live-cockpit .card-body,
+    .result-panel .card-body,
+    #tab-pricing .card-body {
+      padding: 10px 11px;
+    }
+    .cockpit-item {
+      padding: 9px 10px;
+    }
+    .cockpit-value {
+      font-size: .98rem;
+    }
+    .cockpit-note {
+      padding: 8px 9px;
+      font-size: .66rem;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    :root {
+      --page-width: 1320px;
+    }
+    body {
+      padding: 10px 18px 28px;
+      background:
+        radial-gradient(circle at top, rgba(91,124,250,.08) 0, rgba(91,124,250,0) 30%),
+        radial-gradient(circle at left top, rgba(110,99,246,.06) 0, rgba(110,99,246,0) 24%),
+        linear-gradient(180deg, #f8faff 0, #f4f7fd 240px);
+    }
+    .page-title {
+      margin-bottom: 10px;
+    }
+    .page-title h1 {
+      font-size: 1.92rem;
+      line-height: 1.08;
+    }
+    .page-title p,
+    .page-badge,
+    .section-strip,
+    .dashboard-strip {
+      display: none;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.68fr) minmax(340px, .78fr);
+      gap: 16px;
+      align-items: start;
+      max-width: var(--page-width);
+    }
+    .compact-panel {
+      grid-column: 1;
+      grid-row: 1;
+      position: static;
+      width: 100%;
+      max-width: none;
+      margin-bottom: 0;
+      overflow: visible;
+    }
+    .compact-panel .card-header {
+      padding: 14px 18px 12px;
+      font-size: .98rem;
+      letter-spacing: .01em;
+    }
+    .compact-panel .card-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 1.08fr) minmax(250px, .8fr);
+      gap: 12px;
+      padding: 14px 16px 16px;
+      align-items: start;
+    }
+    .input-overview,
+    .step-nav,
+    .overview-statuses,
+    .btn-calc,
+    .compact-panel .card-body > div[style*='text-align:center'] {
+      display: none;
+    }
+    #input-section-pricing,
+    #input-section-product,
+    #input-section-cost {
+      margin-bottom: 0;
+      min-height: 100%;
+      padding: 12px 13px 13px;
+      border-radius: 16px;
+      border: 1px solid #e6ebf6;
+      background: linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(248,250,255,.98) 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    #input-section-pricing { grid-column: 1; }
+    #input-section-product { grid-column: 2; }
+    #input-section-cost { grid-column: 3; }
+    .section-head {
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(228,232,240,.9);
+    }
+    .section-title,
+    .compact-panel .section-title {
+      font-size: .84rem;
+      letter-spacing: 0;
+    }
+    .section-state,
+    .compact-panel .section-state {
+      padding: 5px 9px;
+      font-size: .68rem;
+    }
+    .compact-panel .form-label {
+      margin-bottom: 5px;
+      font-size: .82rem;
+      line-height: 1.24;
+    }
+    .field-head {
+      gap: 6px;
+      margin-bottom: 5px;
+    }
+    .field-link {
+      font-size: .66rem;
+    }
+    .field-badge {
+      padding: 3px 7px;
+      font-size: .62rem;
+    }
+    .field-card {
+      padding: 10px;
+      border-radius: 13px;
+      border-color: #e7edf8;
+      background: linear-gradient(180deg, #fff 0%, #f8fbff 100%);
+    }
+    .compact-panel .form-control,
+    .compact-panel .carrier-select {
+      min-height: 44px;
+      padding: 9px 11px;
+      border-radius: 12px;
+      font-size: .9rem;
+      font-weight: 650;
+      background: linear-gradient(180deg, #fbfcff 0%, #f5f7fc 100%);
+    }
+    .compact-panel .form-control::placeholder {
+      font-size: .82rem;
+      font-weight: 600;
+      color: #98a3b8;
+    }
+    .compact-grid-2,
+    .cost-grid,
+    .derived-price-stack,
+    .product-stack {
+      gap: 10px;
+    }
+    #input-section-pricing {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    #input-section-pricing .section-head,
+    #input-section-pricing > .form-group,
+    #input-section-pricing .compact-grid-2,
+    #input-section-pricing .derived-price-stack {
+      grid-column: 1 / -1;
+    }
+    #input-section-pricing .compact-grid-2,
+    #input-section-pricing .derived-price-stack {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    #input-section-pricing .field-head {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 6px;
+    }
+    #input-section-pricing .field-tools {
+      width: 100%;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    #input-section-pricing .field-card .form-label {
+      font-size: .8rem;
+    }
+    #input-section-product {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    #input-section-product .section-head,
+    #input-section-product > .form-label,
+    #input-section-product .dims-row,
+    #dimensionAlert,
+    #input-section-product > .compact-note {
+      grid-column: 1 / -1;
+    }
+    #input-section-product .product-stack {
+      display: contents;
+    }
+    .weight-row {
+      display: grid;
+      grid-template-columns: minmax(88px, 1fr) auto;
+      gap: 8px;
+    }
+    #input-section-product #weightInput {
+      min-width: 0;
+      text-align: center;
+      font-size: .98rem;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+    .unit-toggle {
+      min-height: 44px;
+      border-radius: 12px;
+      padding: 3px;
+      min-width: 116px;
+      justify-content: stretch;
+    }
+    .unit-btn {
+      min-width: 0;
+      flex: 1;
+      padding: 0 8px;
+      font-size: .78rem;
+      border-radius: 9px;
+    }
+    .dim-caption {
+      display: none;
+    }
+    #input-section-product .dims-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    #input-section-product .dims-row > div {
+      flex: 1;
+      min-width: 0;
+    }
+    #input-section-product .dims-row .form-control {
+      min-width: 0;
+      width: 100%;
+      text-align: center;
+      font-size: .9rem;
+      padding-left: 6px;
+      padding-right: 6px;
+    }
+    #input-section-product .dims-sep {
+      display: none;
+    }
+    #densityOutput {
+      font-size: .82rem;
+      letter-spacing: 0;
+      text-align: center;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    #input-section-cost {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+    #input-section-cost .section-head,
+    #input-section-cost .cost-grid,
+    #commissionHint,
+    #requiredFieldsHint {
+      grid-column: 1 / -1;
+    }
+    #input-section-cost .cost-grid {
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+    #input-section-cost .cost-grid .span-2 {
+      grid-column: auto;
+    }
+    #input-section-cost .field-head {
+      align-items: center;
+    }
+    .field-jump-btn {
+      padding: 4px 8px;
+      font-size: .62rem;
+    }
+    .dimension-alert,
+    .compact-note,
+    #commissionHint,
+    .required-inline-note {
+      font-size: .68rem;
+      line-height: 1.42;
+    }
+    .compact-note,
+    #commissionHint {
+      margin-top: 4px;
+      color: #7d8798;
+    }
+    .dimension-alert,
+    .required-inline-note {
+      margin-top: 2px;
+      padding: 8px 9px;
+      border-radius: 11px;
+    }
+    #requiredFieldsHint {
+      background: rgba(255,149,0,.08);
+      border-color: rgba(255,149,0,.18);
+      color: #a55e00;
+    }
+    .quick-actions {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .compact-panel .vas-section {
+      grid-column: 1 / -1;
+      margin-top: 2px;
+    }
+    .compact-panel .vas-toggle {
+      padding: 12px 13px;
+      border-radius: 14px;
+      box-shadow: none;
+      border: 1px solid #e6ebf6;
+      background: linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(248,250,255,.98) 100%);
+    }
+    .compact-panel .vas-toggle-title {
+      font-size: .84rem;
+    }
+    .compact-panel .vas-toggle-sub {
+      font-size: .7rem;
+    }
+    .compact-panel .vas-toggle-fee {
+      font-size: .94rem;
+    }
+    .compact-panel .vas-body {
+      border: 1px solid #e6ebf6;
+      border-top: none;
+      box-shadow: none;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    }
+    .compact-panel .vas-content {
+      padding: 11px 12px 12px;
+    }
+    .compact-panel .vas-summary {
+      margin-bottom: 8px;
+    }
+    .compact-panel .vas-options {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px 10px;
+    }
+    .compact-panel .vas-group {
+      gap: 8px;
+      padding: 10px 0;
+    }
+    .compact-panel .vas-option {
+      gap: 8px;
+    }
+    .compact-panel .vas-option-main {
+      padding: 8px 9px;
+      border-radius: 11px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      border: 1px solid #e8edf7;
+    }
+    .compact-panel .vas-option-price {
+      font-size: .7rem;
+    }
+    .compact-panel .vas-option-title {
+      font-size: .76rem;
+    }
+    .compact-panel .vas-option-desc,
+    .compact-panel .vas-summary-tip {
+      font-size: .64rem;
+    }
+    .compact-panel .vas-help {
+      width: 22px;
+      height: 22px;
+      font-size: .7rem;
+    }
+    .ghost-btn {
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: .82rem;
+    }
+    .results-stack {
+      display: contents;
+    }
+    #liveCockpitCard {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: start;
+      position: sticky;
+      top: 10px;
+      z-index: 2;
+    }
+    #resultPanel {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    #tab-pricing {
+      grid-column: 1 / -1;
+      grid-row: 3;
+    }
+    .guide-fold {
+      grid-column: 1 / -1;
+      grid-row: 4;
+    }
+    #resultPanel,
+    #tab-pricing,
+    .guide-fold {
+      min-width: 0;
+    }
+    .results-stack .card-header,
+    #resultPanel .card-header,
+    #tab-pricing .card-header {
+      padding: 13px 16px 11px;
+      font-size: .9rem;
+    }
+    .live-cockpit .card-header {
+      padding: 15px 16px 12px;
+      font-size: .98rem;
+      border-bottom-color: #dfe6fa;
+      background: linear-gradient(90deg, rgba(91,124,250,.09) 0%, rgba(110,99,246,.05) 100%);
+    }
+    .live-cockpit .card-body {
+      padding: 16px;
+      background: linear-gradient(180deg, #fcfdff 0%, #f7f9ff 100%);
+    }
+    .profit-hero {
+      padding: 14px 14px 12px;
+      border-radius: 18px;
+      border: 1px solid #e4eaf8;
+      background: linear-gradient(135deg, #ffffff 0%, #f5f8ff 54%, #f8f7ff 100%);
+      display: grid;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .profit-hero.good {
+      border-color: rgba(58,182,122,.25);
+      box-shadow: 0 16px 30px rgba(58,182,122,.08);
+    }
+    .profit-hero.warn {
+      border-color: rgba(241,168,78,.25);
+      box-shadow: 0 16px 30px rgba(241,168,78,.08);
+    }
+    .profit-hero.bad {
+      border-color: rgba(238,107,110,.22);
+      box-shadow: 0 16px 30px rgba(238,107,110,.08);
+    }
+    .profit-hero.idle {
+      border-color: rgba(91,124,250,.18);
+    }
+    .profit-hero-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .04em;
+      color: var(--gray3);
+      text-transform: uppercase;
+    }
+    .profit-hero-value {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+      color: var(--gray1);
+    }
+    .profit-hero-value.pos { color: var(--green); }
+    .profit-hero-value.warn { color: var(--orange); }
+    .profit-hero-value.neg { color: var(--red); }
+    .profit-hero-value.info { color: var(--blue); }
+    .profit-hero-rate {
+      margin-top: 8px;
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--gray2);
+    }
+    .profit-hero-sub {
+      margin-top: 6px;
+      font-size: .76rem;
+      line-height: 1.5;
+      color: var(--gray3);
+    }
+    .profit-hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(91,124,250,.10);
+      border: 1px solid rgba(91,124,250,.14);
+      color: #4a67dd;
+      font-size: .72rem;
+      font-weight: 700;
+    }
+    .hero-badge.soft {
+      background: rgba(110,120,144,.08);
+      border-color: rgba(110,120,144,.12);
+      color: #617089;
+    }
+    .cockpit-kpis {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .kpi-card {
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid #e7edf8;
+      background: linear-gradient(180deg, #fff 0%, #f9fbff 100%);
+      min-width: 0;
+    }
+    .kpi-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: .7rem;
+      font-weight: 800;
+      color: var(--gray3);
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .kpi-value {
+      font-size: 1.14rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--gray2);
+    }
+    .kpi-meta {
+      margin-top: 4px;
+      font-size: .72rem;
+      line-height: 1.42;
+      color: var(--gray3);
+    }
+    .cockpit-footnote {
+      margin-top: 12px;
+      padding: 10px 11px;
+      border-radius: 13px;
+      border: 1px solid #e8edf7;
+      background: rgba(248,250,255,.96);
+      display: grid;
+      gap: 4px;
+      color: var(--gray3);
+      font-size: .74rem;
+      line-height: 1.46;
+    }
+    .cockpit-footnote strong {
+      color: var(--gray2);
+      font-size: .78rem;
+    }
+  }
+
+  @media (min-width: 1180px) and (max-height: 820px) {
+    .page-title {
+      margin-bottom: 8px;
+    }
+    .page-title h1 {
+      font-size: 1.72rem;
+    }
+    .compact-panel .card-header {
+      padding: 12px 16px 10px;
+    }
+    .compact-panel .card-body {
+      gap: 10px;
+      padding: 12px 14px 14px;
+    }
+    #input-section-pricing,
+    #input-section-product,
+    #input-section-cost {
+      padding: 10px 11px 11px;
+    }
+    .compact-panel .form-label {
+      font-size: .78rem;
+    }
+    .compact-panel .form-control,
+    .compact-panel .carrier-select {
+      min-height: 40px;
+      padding: 8px 10px;
+      font-size: .86rem;
+    }
+    .weight-row {
+      grid-template-columns: minmax(76px, 1fr) 106px;
+    }
+    #input-section-product .dims-row {
+      gap: 6px;
+    }
+    #input-section-product .dims-row .form-control,
+    #densityOutput {
+      font-size: .8rem;
+    }
+    .field-card {
+      padding: 9px;
+    }
+    .compact-panel .vas-toggle {
+      padding: 10px 11px;
+    }
+    .compact-panel .vas-content {
+      padding: 10px 11px 11px;
+    }
+    .compact-panel .vas-options {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .profit-hero {
+      padding: 12px 12px 11px;
+      gap: 10px;
+    }
+    .profit-hero-value {
+      font-size: 1.78rem;
+    }
+    .live-cockpit .card-body {
+      padding: 14px;
+    }
+    .cockpit-kpis {
+      gap: 8px;
+    }
+    .kpi-card {
+      padding: 10px 11px;
+    }
+    .kpi-value {
+      font-size: 1.04rem;
+    }
+    .cockpit-footnote {
+      margin-top: 10px;
+      padding: 9px 10px;
+      font-size: .7rem;
+    }
+  }
 </style>
 </head>
 <body>
@@ -2784,8 +3855,382 @@
 
 <div class="copy-toast" id="copyToast">已复制结果</div>
 
-<script src="carriers/zto-rfbs.js"></script>
-<script src="freight-engine.js"></script>
+<script>`n/**
+ * ZTO-rFBS 物流运费计算插件
+ * 数据来源：ZTO-rFBS物流综合服务报价表v6.3 Big密度版
+ * 所有公式逻辑与表格100%一致
+ */
+class ZTORFBSCarrier {
+  get name() { return 'ZTO-rFBS'; }
+  get label() { return '中通跨境 ZTO-rFBS (v6.3 Big密度版)'; }
+  get version() { return 'v6.3'; }
+  get currency() { return 'RUB'; }
+
+  // ─── 货件分组矩阵 ───────────────────────────────────────────────────────────
+  // 重量行索引: (0,0.5]=0, (0.5,2]=1, (2,5]=2, (5,30]=3, >30=4
+  // 货值列索引: (0,1500]=0, (1500,7000]=1, (7000,250000]=2, >250000=3
+  _GROUP_MATRIX = [
+    ['Extra Small', 'Small',        'Premium Small', '超出最高货值'],
+    ['Budget',      'Small',        'Premium Small', '超出最高货值'],
+    ['Budget',      'Big',          'Premium Small', '超出最高货值'],
+    ['Budget',      'Big',          'Premium Big',   '超出最高货值'],
+    ['超出最大重量',   '超出最大重量',    '超出最大重量',    '超出最高货值、最大重量'],
+  ];
+
+  // 尺寸限制 [三边之和上限, 最大边长上限]
+  _SIZE_LIMITS = {
+    'Extra Small':  [90,  60],
+    'Budget':       [150, 60],
+    'Small':        [150, 60],
+    'Big':          [250, 150],
+    'Premium Small':[250, 150],
+    'Premium Big':  [310, 150],
+  };
+
+  // Extra Small 密度阈值
+  _DENSITY_THRESHOLD = 55; // kg/m³
+
+  /**
+   * 向上取整到整数克（与Excel ROUNDUP(...,0)一致）
+   * 注意：对浮点误差做处理
+   */
+  _ceilGrams(kg) {
+    const g = kg * 1000;
+    return Math.ceil(Math.round(g * 1e10) / 1e10);
+  }
+
+  /**
+   * 确定重量行索引
+   */
+  _weightRow(weight_kg) {
+    const g = Math.ceil(Math.round(weight_kg * 1000 * 1e10) / 1e10);
+    if (g >= 1 && g <= 500)   return 0; // (0, 0.5]
+    if (g > 500 && g <= 2000) return 1; // (0.5, 2]
+    if (g > 2000 && g <= 5000)return 2; // (2, 5]
+    if (g > 5000 && g <= 30000)return 3;// (5, 30]
+    return 4; // > 30kg
+  }
+
+  /**
+   * 确定货值列索引（卢布）
+   */
+  _valueCol(value_rub) {
+    if (value_rub >= 1 && value_rub <= 1500)    return 0;
+    if (value_rub > 1500 && value_rub <= 7000)  return 1;
+    if (value_rub > 7000 && value_rub <= 250000)return 2;
+    return 3; // > 250000
+  }
+
+  /**
+   * 货件分组
+   * @param {number} weight_kg - 实重（千克）
+   * @param {number} value_rub - 货值（卢布）
+   * @returns {string} 货件组别
+   */
+  classify(weight_kg, value_rub) {
+    if (weight_kg <= 0 || value_rub <= 0) return null;
+    const row = this._weightRow(weight_kg);
+    const col = this._valueCol(value_rub);
+    return this._GROUP_MATRIX[row][col];
+  }
+
+  /**
+   * 尺寸校验
+   * @returns {{ result, sumEdges, maxEdge }}
+   */
+  checkSize(group, length, width, height) {
+    const limits = this._SIZE_LIMITS[group];
+    if (!limits) return { result: '货件组别无效', sumEdges: 0, maxEdge: 0 };
+    const sumEdges = length + width + height;
+    const maxEdge = Math.max(length, width, height);
+    const [maxSum, maxSingle] = limits;
+    const sumOk = sumEdges <= maxSum;
+    const singleOk = maxEdge <= maxSingle;
+    let result;
+    if (sumOk && singleOk)    result = '限定区间内';
+    else if (!sumOk && singleOk) result = '三边之和超出限制';
+    else if (sumOk && !singleOk) result = '最大边长超出限制';
+    else                      result = '三边和&最大边超限';
+    return { result, sumEdges, maxEdge };
+  }
+
+  /**
+   * 密度校验（仅 Extra Small Big密度版）
+   * @returns {{ density, pass, label }} density 单位 kg/m³
+   */
+  checkDensity(weight_kg, length, width, height) {
+    const volumeM3 = (length * width * height) / 1_000_000;
+    if (volumeM3 === 0) return { density: null, pass: null, label: '尺寸为零' };
+    const density = weight_kg / volumeM3;
+    const pass = density > this._DENSITY_THRESHOLD;
+    return {
+      density: +density.toFixed(2),
+      pass,
+      label: pass ? '可发' : `密度≤${this._DENSITY_THRESHOLD}kg/m³，不可发`,
+    };
+  }
+
+  /**
+   * 计算是否计抛
+   * - Budget/Small/Premium Small: 若 LWH/24000 >= 实重 → 是
+   * - Big/Premium Big:            若 LWH/12000 >= 实重 → 是
+   * - Extra Small: 否
+   */
+  checkVolumetric(group, weight_kg, length, width, height) {
+    if (group === 'Extra Small') return false;
+    const vol12000 = (length * width * height) / 12000;
+    const vol24000 = (length * width * height) / 24000;
+    if (['Budget', 'Small', 'Premium Small'].includes(group)) {
+      return vol24000 >= weight_kg;
+    }
+    return vol12000 >= weight_kg; // Big, Premium Big
+  }
+
+  /**
+   * 获取计费重量（千克）
+   * @param {string} tier - 'express' | 'standard' | 'economy'
+   */
+  _billingWeight(group, weight_kg, length, width, height, tier) {
+    if (group === 'Extra Small') return weight_kg;
+    const vol12000 = (length * width * height) / 12000;
+    const vol24000 = (length * width * height) / 24000;
+    if (tier === 'economy' && group === 'Premium Small') {
+      return Math.max(weight_kg, vol24000);
+    }
+    return Math.max(weight_kg, vol12000);
+  }
+
+  /**
+   * 计算单档运费
+   * @param {string} group - 货件组别
+   * @param {string} tier  - 'express' | 'standard' | 'economy'
+   * @param {number} billing_kg - 计费重量（千克）
+   * @returns {number|null} 运费RMB，null=不可用
+   */
+  _calcFee(group, tier, billing_kg) {
+    const g = this._ceilGrams(billing_kg);
+
+    // Express (空运)
+    if (tier === 'express') {
+      if (group === 'Extra Small')   return g < 1 ? 3.1668  : +(g * 0.0468 + 3.12).toFixed(4);
+      if (group === 'Budget')        return g < 1 ? 23.95432: +(g * 0.03432 + 23.92).toFixed(4);
+      if (group === 'Small')         return g < 1 ? 16.6868 : +(g * 0.0468 + 16.64).toFixed(4);
+      if (group === 'Big')           return g < 1 ? 37.47432: +(g * 0.03432 + 37.44).toFixed(4);
+      if (group === 'Premium Small') return g < 1 ? 22.9268 : +(g * 0.0468 + 22.88).toFixed(4);
+      if (group === 'Premium Big')   return null; // 未上线
+    }
+
+    // Standard (陆空)
+    if (tier === 'standard') {
+      if (group === 'Extra Small')   return g < 1 ? 3.1564  : +(g * 0.0364 + 3.12).toFixed(4);
+      if (group === 'Budget')        return g < 1 ? 23.946  : +(g * 0.026 + 23.92).toFixed(4);
+      if (group === 'Small')         return g < 1 ? 16.6764 : +(g * 0.0364 + 16.64).toFixed(4);
+      if (group === 'Big')           return g < 1 ? 37.466  : +(g * 0.026 + 37.44).toFixed(4);
+      if (group === 'Premium Small') return g < 1 ? 22.9164 : +(g * 0.0364 + 22.88).toFixed(4);
+      if (group === 'Premium Big')   return g < 1 ? 64.50912: +(g * 0.02912 + 64.48).toFixed(4);
+    }
+
+    // Economy (陆运)
+    if (tier === 'economy') {
+      if (group === 'Extra Small')   return g < 1 ? 3.146   : +(g * 0.026 + 3.12).toFixed(4);
+      if (group === 'Budget')        return g < 1 ? 23.93768: +(g * 0.01768 + 23.92).toFixed(4);
+      if (group === 'Small')         return g < 1 ? 16.666  : +(g * 0.026 + 16.64).toFixed(4);
+      if (group === 'Big')           return g < 1 ? 37.45768: +(g * 0.01768 + 37.44).toFixed(4);
+      if (group === 'Premium Small') return g < 1 ? 22.906  : +(g * 0.026 + 22.88).toFixed(4);
+      if (group === 'Premium Big')   return g < 1 ? 64.50392: +(g * 0.02392 + 64.48).toFixed(4);
+    }
+
+    return null;
+  }
+
+  /**
+   * 完整计算入口
+   * @param {object} params
+   * @param {number} params.weight_kg  - 实重（千克）
+   * @param {number} params.value_rub  - 货值（卢布）
+   * @param {number} params.length     - 长（厘米）
+   * @param {number} params.width      - 宽（厘米）
+   * @param {number} params.height     - 高（厘米）
+   * @returns {object} 完整计算结果
+   */
+  calculate({ weight_kg, value_rub, length, width, height }) {
+    const result = {
+      carrier: this.name,
+      version: this.version,
+      inputs: { weight_kg, value_rub, length, width, height },
+      group: null,
+      groupError: null,
+      sizeCheck: null,
+      densityCheck: null,
+      isVolumetric: null,
+      express: null,
+      standard: null,
+      economy: null,
+      bigPricing: null, // Big密度版特有
+    };
+
+    // 1. 货件分组
+    const group = this.classify(weight_kg, value_rub);
+    result.group = group;
+
+    const errors = ['超出最高货值', '超出最大重量', '超出最高货值、最大重量'];
+    if (!group || errors.includes(group)) {
+      result.groupError = group || '参数无效';
+      return result;
+    }
+
+    // 2. 尺寸校验（需要尺寸）
+    const hasDimensions = length > 0 && width > 0 && height > 0;
+    if (hasDimensions) {
+      result.sizeCheck = this.checkSize(group, length, width, height);
+    }
+
+    const sizeOk = !hasDimensions || result.sizeCheck?.result === '限定区间内';
+    if (!sizeOk) return result;
+
+    // 3. 密度校验（仅 Extra Small + Big密度版）
+    if (group === 'Extra Small' && hasDimensions) {
+      result.densityCheck = this.checkDensity(weight_kg, length, width, height);
+      if (!result.densityCheck.pass) return result;
+    }
+
+    // 4. 是否计抛
+    if (hasDimensions) {
+      result.isVolumetric = this.checkVolumetric(group, weight_kg, length, width, height);
+    }
+
+    // 5. 三档运费计算
+    const tiers = ['express', 'standard', 'economy'];
+    for (const tier of tiers) {
+      const billing_kg = hasDimensions
+        ? this._billingWeight(group, weight_kg, length, width, height, tier)
+        : weight_kg;
+      const fee = this._calcFee(group, tier, billing_kg);
+      result[tier] = {
+        billingWeight_kg: +billing_kg.toFixed(6),
+        billingWeight_g: this._ceilGrams(billing_kg),
+        fee_rmb: fee,
+        unavailable: fee === null,
+      };
+    }
+
+    // 6. Big密度版特殊展示
+    if (group === 'Big') {
+      result.bigPricing = {
+        air:      { label: 'Big空运（Express）', rate: '¥37.44 + ¥0.03432/1克' },
+        airGround:{ label: 'Big陆空（Standard）',rate: '¥37.44 + ¥0.026/1克'  },
+        ground:   { label: 'Big陆运（Economy）', rate: '¥37.44 + ¥0.01768/1克'},
+      };
+    }
+
+    return result;
+  }
+
+  // ─── 增值服务费率表（只读参考） ─────────────────────────────────────────────
+  get valueAddedServices() {
+    return [
+      { service: '贴单',          unit: '元/单', price: 1.5,  note: '' },
+      { service: '拆包',          unit: '元/单', price: 3,    note: '含基础耗材' },
+      { service: '合包',          unit: '元/单', price: 3,    note: '含基础耗材' },
+      { service: '拆分+交叉合包',  unit: '元/单', price: 4,    note: '含基础耗材' },
+      { service: '再包装',        unit: '元/单', price: 3,    note: '含基础耗材' },
+      { service: '额外加固基础',   unit: '元/单', price: 2.5,  note: '+分级：≤3kg +1；3-10kg +2；>10kg/易碎 +3' },
+      { service: '拆包质检',      unit: '元/单', price: 3,    note: '含基础耗材' },
+      { service: '拍照验货',      unit: '元/单', price: 3,    note: '含基础耗材' },
+      { service: '添加配件',      unit: '元/单', price: 3,    note: '含基础耗材' },
+      { service: '退货改派',      unit: '元/单', price: 3,    note: 'SKU需与原单一致' },
+      { service: '仓储（0-30天）', unit: '免费',  price: 0,    note: '' },
+      { service: '仓储（31-90天）',unit: '元/单/天',price: 2,  note: '超长件(三边和>120cm)加+3元/单/天' },
+      { service: '销毁',          unit: '免费',  price: 0,    note: '90天未操作自动销毁' },
+    ];
+  }
+
+  // ─── 仓库信息 ────────────────────────────────────────────────────────────
+  get warehouses() {
+    return [
+      { city: '杭州', contact: '胡文炳 18758224593', address: '浙江省杭州市临平区塘栖镇智启街1号中通云仓科技有限公司五号楼二楼月台Ozon集货仓' },
+      { city: '东莞', contact: '刘双双 18627695782', address: '广东省东莞市沙田镇临海北路5号中通快递E栋3楼Ozon集货仓' },
+      { city: '泉州', contact: '中通星隆跨境云仓 15159553388', address: '福建省泉州市晋江市磁灶镇陶美路550号普达雅艺物流园9号电梯五楼Ozon集货仓' },
+      { city: '厦门', contact: '陈伟 15105998277', address: '福建省厦门市集美区天安路122-112号Ozon集货仓' },
+    ];
+  }
+}
+
+// 导出（兼容浏览器直接引用和模块化）
+if (typeof module !== 'undefined') module.exports = ZTORFBSCarrier;
+
+</script>
+<script>`n/**
+ * FreightEngine — 多物流商插件化运费计算引擎
+ *
+ * 使用方法：
+ *   engine.register(new ZTORFBSCarrier());
+ *   engine.setCarrier('ZTO-rFBS');
+ *   const result = engine.calculate({ weight_kg, value_rub, length, width, height });
+ *
+ * 新增物流商：实现 CarrierPlugin 接口后调用 engine.register() 即可。
+ */
+class FreightEngine {
+  constructor() {
+    this._carriers = new Map();
+    this._active = null;
+  }
+
+  /**
+   * 注册物流商插件
+   * 要求插件实现：
+   *   get name()     → string
+   *   get label()    → string  (显示名称)
+   *   get version()  → string
+   *   calculate(params) → object
+   */
+  register(carrier) {
+    if (!carrier.name || typeof carrier.calculate !== 'function') {
+      throw new Error('CarrierPlugin 必须实现 name 和 calculate()');
+    }
+    this._carriers.set(carrier.name, carrier);
+    if (!this._active) this._active = carrier.name;
+  }
+
+  /** 切换当前物流商 */
+  setCarrier(name) {
+    if (!this._carriers.has(name)) throw new Error(`未注册的物流商: ${name}`);
+    this._active = name;
+  }
+
+  /** 获取当前物流商插件 */
+  get currentCarrier() {
+    return this._carriers.get(this._active);
+  }
+
+  /** 获取所有已注册物流商列表 */
+  get carrierList() {
+    return [...this._carriers.values()].map(c => ({
+      name: c.name,
+      label: c.label || c.name,
+      version: c.version,
+    }));
+  }
+
+  /**
+   * 执行运费计算（委托给当前物流商插件）
+   * @param {object} params - { weight_kg, value_rub, length, width, height }
+   * @returns {object} 计算结果
+   */
+  calculate(params) {
+    if (!this._active) throw new Error('尚未注册任何物流商');
+    return this.currentCarrier.calculate(params);
+  }
+}
+
+// 全局单例
+const freightEngine = new FreightEngine();
+
+if (typeof module !== 'undefined') {
+  module.exports = { FreightEngine, freightEngine };
+}
+
+</script>
 <script>
 // ═══ Engine Init ═══════════════════════════════════════════════════════════
 const carrier_zto = new ZTORFBSCarrier();
@@ -3020,6 +4465,19 @@ function renderVAS() {
   updateVASSummary();
 }
 
+function mountVASIntoInput() {
+  const vasSection = document.querySelector('.vas-section');
+  const inputBody = document.querySelector('.compact-panel .card-body');
+  const quickActions = inputBody?.querySelector('.quick-actions');
+  if (!vasSection || !inputBody) return;
+
+  if (quickActions) {
+    inputBody.insertBefore(vasSection, quickActions);
+  } else {
+    inputBody.appendChild(vasSection);
+  }
+}
+
 function updateVASSummary() {
   const checked = [...document.querySelectorAll('#vasContent input:checked')];
   const total = checked.reduce((sum, input) => sum + (parseFloat(input.dataset.fee) || 0), 0);
@@ -3053,6 +4511,7 @@ function updateVASSummary() {
   doCalculate();
 }
 renderVAS();
+mountVASIntoInput();
 
 function toggleVAS() {
   document.getElementById('vasToggle').classList.toggle('open');
@@ -3430,6 +4889,389 @@ function updateDimensionRequirement(base, weight_kg, length, width, height) {
   alert.innerHTML = '';
 }
 
+function ensureDashboardExtensions() {
+  const dashboardStrip = document.getElementById('dashboardStrip');
+  if (dashboardStrip && !document.getElementById('dashProfitRateCard')) {
+    const rateCard = document.createElement('div');
+    rateCard.className = 'dashboard-card';
+    rateCard.id = 'dashProfitRateCard';
+    rateCard.innerHTML = `
+      <span class="label">当前利润率</span>
+      <div class="value" id="dashProfitRate">—</div>
+      <div class="meta" id="dashProfitRateMeta">补全成本后实时显示</div>
+    `;
+    dashboardStrip.appendChild(rateCard);
+  }
+
+  const resultsStack = document.querySelector('.results-stack');
+  if (resultsStack && !document.getElementById('liveCockpitCard')) {
+    const cockpitCard = document.createElement('section');
+    cockpitCard.className = 'card live-cockpit';
+    cockpitCard.id = 'liveCockpitCard';
+    cockpitCard.innerHTML = `
+      <div class="card-header">首屏利润看板</div>
+      <div class="card-body" id="liveCockpitBody">
+        <div class="result-empty">
+          <p>先填写黑标、绿标、产品重量与成本，首屏会实时显示利润与利润率。</p>
+        </div>
+      </div>
+    `;
+
+    const pricingCard = document.getElementById('tab-pricing');
+    if (pricingCard) {
+      resultsStack.insertBefore(cockpitCard, pricingCard);
+    } else {
+      resultsStack.insertBefore(cockpitCard, resultsStack.firstChild);
+    }
+  }
+}
+
+function syncDashboardExtensions(base, result, tier) {
+  ensureDashboardExtensions();
+
+  const rateCard = document.getElementById('dashProfitRateCard');
+  const rateEl = document.getElementById('dashProfitRate');
+  const rateMetaEl = document.getElementById('dashProfitRateMeta');
+  const cockpitBody = document.getElementById('liveCockpitBody');
+  if (!rateCard || !rateEl || !rateMetaEl || !cockpitBody) return;
+
+  const fmtMoney = value => value > 0 ? `¥${value.toFixed(2)}` : '—';
+  const fmtSignedMoney = value => Number.isFinite(value) ? `¥${value.toFixed(2)}` : '—';
+  const fmtPercent = value => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
+  const missingText = (base?.requiredState?.missingList || []).filter(item => item !== '产品实重').join('、');
+  const tierData = tier && result?.[tier] && !result[tier].unavailable ? result[tier] : null;
+  const groupText = result?.groupError ? '不可寄送' : (result?.group ? groupChinese(result.group) : (base?.realRMB > 0 ? '待判断' : '待填写'));
+  const routeText = tierData ? tierName(tier) : (result?.groupError ? '不可选' : '待选择');
+  let pricing = null;
+
+  rateCard.classList.remove('good', 'warn', 'bad');
+
+  if (tierData && base?.requiredState?.pricingReady) {
+    pricing = computePricing(base, tierData.fee_rmb);
+    rateEl.textContent = fmtPercent(pricing.profitRate);
+    if (base.requiredState?.commissionLow) {
+      rateMetaEl.textContent = '佣金率低于 10%，请先复核';
+      rateCard.classList.add('warn');
+    } else {
+      rateMetaEl.textContent = `${tierName(tier)} · 净利润 ${fmtSignedMoney(pricing.profit)}`;
+      rateCard.classList.add(pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad');
+    }
+  } else if (base?.realRMB > 0 && result?.group) {
+    rateEl.textContent = '—';
+    if (!base?.requiredState?.pricingReady) {
+      rateMetaEl.textContent = `请先补全${missingText || '采购成本和佣金率'}`;
+      rateCard.classList.add('warn');
+    } else {
+      rateMetaEl.textContent = '选择运费方案后显示';
+    }
+  } else if (base?.realRMB > 0) {
+    rateEl.textContent = '—';
+    rateMetaEl.textContent = '补重量和尺寸后显示';
+  } else {
+    rateEl.textContent = '—';
+    rateMetaEl.textContent = '补全价格后显示';
+  }
+
+  const profitText = pricing ? fmtSignedMoney(pricing.profit) : '—';
+  const profitClass = pricing ? (pricing.profit >= 0 ? (pricing.profitRate >= 20 ? 'pos' : 'warn') : 'neg') : 'info';
+  const profitMeta = pricing
+    ? (base.requiredState?.commissionLow ? '佣金率偏低，请先复核' : `总成本 ${fmtMoney(pricing.totalCost)}`)
+    : (!base?.requiredState?.pricingReady ? `待补 ${missingText || '采购成本和佣金率'}` : '选定运费方案后显示');
+  const rateText = pricing ? fmtPercent(pricing.profitRate) : '—';
+  const rateClass = pricing ? (pricing.profitRate >= 20 ? 'pos' : pricing.profitRate >= 0 ? 'warn' : 'neg') : 'info';
+  const rateMeta = pricing
+    ? `${tierName(tier)} · 运费 ${fmtMoney(tierData.fee_rmb)}`
+    : (!result?.group ? '补重量和尺寸后判断' : '选择运费方案后显示');
+  const routeMeta = tierData ? `计费重 ${tierData.billingWeight_g} g` : '空运 / 陆空 / 陆运 自动比较';
+  const groupMeta = result?.groupError ? result.groupError : (result?.group ? '已完成货件归类' : '填写重量与尺寸后自动判断');
+  const realMeta = base?.realRMB > 0 ? '黑标 / 绿标自动推算' : '先填写黑标和绿标';
+  const recommendMeta = base?.recommendPrice > 0 ? '支持手动改价' : '真实售价生成后联动';
+
+  cockpitBody.innerHTML = `
+    <div class="cockpit-grid">
+      <div class="cockpit-item highlight">
+        <span class="cockpit-label">真实售价</span>
+        <div class="cockpit-value info">${fmtMoney(base?.realRMB || 0)}</div>
+        <div class="cockpit-meta">${realMeta}</div>
+      </div>
+      <div class="cockpit-item">
+        <span class="cockpit-label">推荐售价</span>
+        <div class="cockpit-value info">${fmtMoney(base?.recommendPrice || 0)}</div>
+        <div class="cockpit-meta">${recommendMeta}</div>
+      </div>
+      <div class="cockpit-item">
+        <span class="cockpit-label">货件组别</span>
+        <div class="cockpit-value">${groupText}</div>
+        <div class="cockpit-meta">${groupMeta}</div>
+      </div>
+      <div class="cockpit-item">
+        <span class="cockpit-label">当前方案</span>
+        <div class="cockpit-value">${routeText}</div>
+        <div class="cockpit-meta">${routeMeta}</div>
+      </div>
+      <div class="cockpit-item highlight">
+        <span class="cockpit-label">净利润</span>
+        <div class="cockpit-value ${profitClass}">${profitText}</div>
+        <div class="cockpit-meta">${profitMeta}</div>
+      </div>
+      <div class="cockpit-item highlight">
+        <span class="cockpit-label">利润率</span>
+        <div class="cockpit-value ${rateClass}">${rateText}</div>
+        <div class="cockpit-meta">${rateMeta}</div>
+      </div>
+    </div>
+    <div class="cockpit-note">
+      <strong>首屏决策摘要</strong>
+      <span>推荐先在左侧补完价格、实重、采购成本和佣金率，右侧会立刻刷新利润结果。</span>
+      <span>${tierData ? `当前运费 ${fmtMoney(tierData.fee_rmb)}，计费重 ${tierData.billingWeight_g} g。` : '补完重量后可直接比较空运、陆空、陆运三种方案。'}</span>
+      <span>${result?.group === 'Extra Small' ? '超级轻小件一定要填三边尺寸，中通需要先判断密度。' : (!result?.inputs?.length ? '未填尺寸时利润仅按实重预估，计抛可能导致结果偏高。' : '尺寸已参与判断，利润结果更接近实发。')}</span>
+    </div>
+  `;
+}
+
+function syncDashboardExtensions(base, result, tier) {
+  ensureDashboardExtensions();
+
+  const rateCard = document.getElementById('dashProfitRateCard');
+  const rateEl = document.getElementById('dashProfitRate');
+  const rateMetaEl = document.getElementById('dashProfitRateMeta');
+  const cockpitBody = document.getElementById('liveCockpitBody');
+  if (!rateCard || !rateEl || !rateMetaEl || !cockpitBody) return;
+
+  const fmtMoney = value => value > 0 ? `¥${value.toFixed(2)}` : '—';
+  const fmtPercent = value => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
+  const missingText = (base?.requiredState?.missingList || []).filter(item => item !== '产品实重').join('、');
+  const tierData = tier && result?.[tier] && !result[tier].unavailable ? result[tier] : null;
+  const groupText = result?.groupError ? '不可寄送' : (result?.group ? groupChinese(result.group) : (base?.realRMB > 0 ? '待判断' : '待填写'));
+  const routeText = tierData ? tierName(tier) : (result?.groupError ? '不可选' : '待选择');
+  let pricing = null;
+
+  rateCard.classList.remove('good', 'warn', 'bad');
+
+  if (tierData && base?.requiredState?.pricingReady) {
+    pricing = computePricing(base, tierData.fee_rmb);
+    rateEl.textContent = fmtPercent(pricing.profitRate);
+    if (base.requiredState?.commissionLow) {
+      rateMetaEl.textContent = '佣金率低于 10%，请先复核';
+      rateCard.classList.add('warn');
+    } else {
+      rateMetaEl.textContent = `${tierName(tier)} · 净利润 ${fmtMoney(pricing.profit)}`;
+      rateCard.classList.add(pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad');
+    }
+  } else if (base?.realRMB > 0 && result?.group) {
+    rateEl.textContent = '—';
+    if (!base?.requiredState?.pricingReady) {
+      rateMetaEl.textContent = `请先补全${missingText || '采购成本和佣金率'}`;
+      rateCard.classList.add('warn');
+    } else {
+      rateMetaEl.textContent = '选择运费方案后显示';
+    }
+  } else if (base?.realRMB > 0) {
+    rateEl.textContent = '—';
+    rateMetaEl.textContent = '补重量和尺寸后显示';
+  } else {
+    rateEl.textContent = '—';
+    rateMetaEl.textContent = '补全价格后显示';
+  }
+
+  const profitText = pricing ? fmtMoney(pricing.profit) : '—';
+  const profitClass = pricing ? (pricing.profit >= 0 ? (pricing.profitRate >= 20 ? 'pos' : 'warn') : 'neg') : 'info';
+  const profitMeta = pricing
+    ? (base.requiredState?.commissionLow ? '佣金率偏低，请先复核' : `总成本 ${fmtMoney(pricing.totalCost)}`)
+    : (!base?.requiredState?.pricingReady ? `待补 ${missingText || '采购成本和佣金率'}` : '运费方案确认后自动联动');
+  const rateText = pricing ? fmtPercent(pricing.profitRate) : '—';
+  const freightText = tierData ? fmtMoney(tierData.fee_rmb) : '—';
+  const billingText = tierData ? `${tierData.billingWeight_g} g` : '待计算';
+  const billingMeta = result?.isVolumetric === true
+    ? '当前按体积重计费'
+    : result?.isVolumetric === false
+      ? '当前按实重计费'
+      : '补尺寸后更准确';
+  const realMeta = _manualRealPrice ? '当前为手动真实售价' : (base?.realRMB > 0 ? '按黑标 / 绿标自动推算' : '先填写黑标和绿标');
+  const recommendMeta = _manualRecommendPrice ? '当前为手动上架价' : (base?.recommendPrice > 0 ? '默认按真实售价 × 0.95' : '真实售价生成后联动');
+  const heroClass = pricing ? (pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad') : 'idle';
+  const heroSub = pricing
+    ? (base.requiredState?.commissionLow
+        ? '佣金率低于 10%，请先复核，否则利润会被高估。'
+        : `${routeText} · 运费 ${freightText} · 总成本 ${fmtMoney(pricing.totalCost)}`)
+    : (!base?.requiredState?.pricingReady
+        ? `先补 ${missingText || '采购成本和佣金率'}`
+        : (result?.group ? '选择一个运费方案后，这里会直接给出利润结论' : '补重量和三边尺寸后，这里会直接给出利润结论'));
+  const decisionText = pricing
+    ? (pricing.profit >= 0 ? '当前方案有利润，现在可以直接比较不同渠道差异。' : '当前方案亏损，建议优先切换渠道或重新调整售价。')
+    : '先补完左侧必填项，右侧会直接告诉你赚多少、利润率多少。';
+  const sizeText = result?.group === 'Extra Small'
+    ? '超级轻小件一定要填三边尺寸，中通需要先判断密度是否可发。'
+    : (result?.group
+        ? '其他渠道也建议填写三边尺寸，不填时利润只按实重预估，计抛可能导致偏差。'
+        : '重量和三边尺寸会自动决定货件组别、计费重和推荐运费方案。');
+
+  cockpitBody.innerHTML = `
+    <div class="profit-hero ${heroClass}">
+      <div class="profit-hero-main">
+        <span class="profit-hero-label">当前净利润</span>
+        <div class="profit-hero-value ${profitClass}">${profitText}</div>
+        <div class="profit-hero-rate">利润率 ${rateText}</div>
+        <div class="profit-hero-sub">${heroSub}</div>
+      </div>
+      <div class="profit-hero-badges">
+        <span class="hero-badge">${groupText}</span>
+        <span class="hero-badge soft">${routeText}</span>
+        <span class="hero-badge soft">贴单/增值服务 ${fmtMoney(base?.label_fee || 0)}</span>
+      </div>
+    </div>
+    <div class="cockpit-kpis">
+      <div class="kpi-card">
+        <span class="kpi-label">真实售价</span>
+        <div class="kpi-value">${fmtMoney(base?.realRMB || 0)}</div>
+        <div class="kpi-meta">${realMeta}</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">推荐售价</span>
+        <div class="kpi-value">${fmtMoney(base?.recommendPrice || 0)}</div>
+        <div class="kpi-meta">${recommendMeta}</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">国际运费</span>
+        <div class="kpi-value">${freightText}</div>
+        <div class="kpi-meta">${profitMeta}</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">计费重</span>
+        <div class="kpi-value">${billingText}</div>
+        <div class="kpi-meta">${billingMeta}</div>
+      </div>
+    </div>
+    <div class="cockpit-footnote">
+      <strong>首屏结论</strong>
+      <span>${decisionText}</span>
+      <span>${sizeText}</span>
+    </div>
+  `;
+}
+
+function syncDashboardExtensions(base, result, tier) {
+  ensureDashboardExtensions();
+
+  const rateCard = document.getElementById('dashProfitRateCard');
+  const rateEl = document.getElementById('dashProfitRate');
+  const rateMetaEl = document.getElementById('dashProfitRateMeta');
+  const cockpitBody = document.getElementById('liveCockpitBody');
+  if (!rateCard || !rateEl || !rateMetaEl || !cockpitBody) return;
+
+  const fmtMoney = value => value > 0 ? `¥${value.toFixed(2)}` : '—';
+  const fmtSignedMoney = value => Number.isFinite(value) ? `¥${value.toFixed(2)}` : '—';
+  const fmtPercent = value => Number.isFinite(value) ? `${value.toFixed(1)}%` : '—';
+  const missingText = (base?.requiredState?.missingList || []).filter(item => item !== '产品实重').join('、');
+  const tierData = tier && result?.[tier] && !result[tier].unavailable ? result[tier] : null;
+  const groupText = result?.groupError ? '不可寄送' : (result?.group ? groupChinese(result.group) : (base?.realRMB > 0 ? '待判断' : '待填写'));
+  const routeText = tierData ? tierName(tier) : (result?.groupError ? '不可选' : '待选择');
+  let pricing = null;
+
+  rateCard.classList.remove('good', 'warn', 'bad');
+
+  if (tierData && base?.requiredState?.pricingReady) {
+    pricing = computePricing(base, tierData.fee_rmb);
+    rateEl.textContent = fmtPercent(pricing.profitRate);
+    if (base.requiredState?.commissionLow) {
+      rateMetaEl.textContent = '佣金率低于 10%，请先复核';
+      rateCard.classList.add('warn');
+    } else {
+      rateMetaEl.textContent = `${tierName(tier)} · 净利润 ${fmtSignedMoney(pricing.profit)}`;
+      rateCard.classList.add(pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad');
+    }
+  } else if (base?.realRMB > 0 && result?.group) {
+    rateEl.textContent = '—';
+    if (!base?.requiredState?.pricingReady) {
+      rateMetaEl.textContent = `请先补全${missingText || '采购成本和佣金率'}`;
+      rateCard.classList.add('warn');
+    } else {
+      rateMetaEl.textContent = '选择运费方案后显示';
+    }
+  } else if (base?.realRMB > 0) {
+    rateEl.textContent = '—';
+    rateMetaEl.textContent = '补重量和尺寸后显示';
+  } else {
+    rateEl.textContent = '—';
+    rateMetaEl.textContent = '补全价格后显示';
+  }
+
+  const profitText = pricing ? fmtSignedMoney(pricing.profit) : '—';
+  const profitClass = pricing ? (pricing.profit >= 0 ? (pricing.profitRate >= 20 ? 'pos' : 'warn') : 'neg') : 'info';
+  const profitMeta = pricing
+    ? (base.requiredState?.commissionLow ? '佣金率偏低，请先复核' : `总成本 ${fmtMoney(pricing.totalCost)}`)
+    : (!base?.requiredState?.pricingReady ? `待补 ${missingText || '采购成本和佣金率'}` : '运费方案确认后自动联动');
+  const rateText = pricing ? fmtPercent(pricing.profitRate) : '—';
+  const freightText = tierData ? fmtMoney(tierData.fee_rmb) : '—';
+  const billingText = tierData ? `${tierData.billingWeight_g} g` : '待计算';
+  const billingMeta = result?.isVolumetric === true
+    ? '当前按体积重计费'
+    : result?.isVolumetric === false
+      ? '当前按实重计费'
+      : '补尺寸后更准确';
+  const realMeta = _manualRealPrice ? '当前为手动真实售价' : (base?.realRMB > 0 ? '按黑标 / 绿标自动推算' : '先填写黑标和绿标');
+  const recommendMeta = _manualRecommendPrice ? '当前为手动上架价' : (base?.recommendPrice > 0 ? '默认按真实售价 × 0.95' : '真实售价生成后联动');
+  const heroClass = pricing ? (pricing.profitRate >= 20 ? 'good' : pricing.profitRate >= 0 ? 'warn' : 'bad') : 'idle';
+  const heroSub = pricing
+    ? (base.requiredState?.commissionLow
+        ? '佣金率低于 10%，请先复核，否则利润会被高估。'
+        : `${routeText} · 运费 ${freightText} · 总成本 ${fmtMoney(pricing.totalCost)}`)
+    : (!base?.requiredState?.pricingReady
+        ? `先补 ${missingText || '采购成本和佣金率'}`
+        : (result?.group ? '选择一个运费方案后，这里会直接给出利润结论' : '补重量和三边尺寸后，这里会直接给出利润结论'));
+  const decisionText = pricing
+    ? (pricing.profit >= 0 ? '当前方案有利润，现在可以直接比较不同渠道差异。' : '当前方案亏损，建议优先切换渠道或重新调整售价。')
+    : '先补完左侧必填项，右侧会直接告诉你赚多少、利润率多少。';
+  const sizeText = result?.group === 'Extra Small'
+    ? '超级轻小件一定要填三边尺寸，中通需要先判断密度是否可发。'
+    : (result?.group
+        ? '其他渠道也建议填写三边尺寸，不填时利润只按实重预估，计抛可能导致偏差。'
+        : '重量和三边尺寸会自动决定货件组别、计费重和推荐运费方案。');
+
+  cockpitBody.innerHTML = `
+    <div class="profit-hero ${heroClass}">
+      <div class="profit-hero-main">
+        <span class="profit-hero-label">当前净利润</span>
+        <div class="profit-hero-value ${profitClass}">${profitText}</div>
+        <div class="profit-hero-rate">利润率 ${rateText}</div>
+        <div class="profit-hero-sub">${heroSub}</div>
+      </div>
+      <div class="profit-hero-badges">
+        <span class="hero-badge">${groupText}</span>
+        <span class="hero-badge soft">${routeText}</span>
+        <span class="hero-badge soft">贴单/增值服务 ${fmtMoney(base?.label_fee || 0)}</span>
+      </div>
+    </div>
+    <div class="cockpit-kpis">
+      <div class="kpi-card">
+        <span class="kpi-label">真实售价</span>
+        <div class="kpi-value">${fmtMoney(base?.realRMB || 0)}</div>
+        <div class="kpi-meta">${realMeta}</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">推荐售价</span>
+        <div class="kpi-value">${fmtMoney(base?.recommendPrice || 0)}</div>
+        <div class="kpi-meta">${recommendMeta}</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">国际运费</span>
+        <div class="kpi-value">${freightText}</div>
+        <div class="kpi-meta">${profitMeta}</div>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-label">计费重</span>
+        <div class="kpi-value">${billingText}</div>
+        <div class="kpi-meta">${billingMeta}</div>
+      </div>
+    </div>
+    <div class="cockpit-footnote">
+      <strong>首屏结论</strong>
+      <span>${decisionText}</span>
+      <span>${sizeText}</span>
+    </div>
+  `;
+}
+
 function renderDashboard(base, result, tier) {
   const realEl = document.getElementById('dashRealPrice');
   const recommendEl = document.getElementById('dashRecommendPrice');
@@ -3500,6 +5342,7 @@ function doCalculate() {
     _lastFreightResult = null;
     _selectedTier = null;
     renderDashboard(base, null, null);
+    syncDashboardExtensions(base, null, null);
     renderFreightPrompt('请先填写黑标价格和绿标价格');
     renderPricing(base, null);
     return;
@@ -3509,6 +5352,7 @@ function doCalculate() {
     _lastFreightResult = null;
     _selectedTier = null;
     renderDashboard(base, null, null);
+    syncDashboardExtensions(base, null, null);
     renderFreightPrompt('真实售价已推算，请继续填写产品实重和尺寸');
     renderPricing(base, null);
     return;
@@ -3518,6 +5362,7 @@ function doCalculate() {
   _lastFreightResult = freightEngine.calculate({ weight_kg, value_rub, length, width, height });
   ensureSelectedTier(_lastFreightResult);
   renderDashboard(base, _lastFreightResult, _selectedTier?.tier || null);
+  syncDashboardExtensions(base, _lastFreightResult, _selectedTier?.tier || null);
   renderResult(_lastFreightResult, base);
   renderPricing(base, _selectedTier?.tier || null);
 }
@@ -3526,6 +5371,7 @@ function selectTier(tier, fee) {
   _selectedTier = { tier, fee };
   const base = getPricingBase();
   renderDashboard(base, _lastFreightResult, tier);
+  syncDashboardExtensions(base, _lastFreightResult, tier);
   renderResult(_lastFreightResult, base);
   renderPricing(base, tier);
 }
@@ -4152,6 +5998,8 @@ function calcPricing() {
 }
 
 fetchDailyRate();
+ensureDashboardExtensions();
+syncDashboardExtensions(getPricingBase(), _lastFreightResult, _selectedTier?.tier || null);
 
 // ═══ Keyboard shortcut ════════════════════════════════════════════════════
 document.addEventListener('keydown', e => {
